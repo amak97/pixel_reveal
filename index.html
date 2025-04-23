@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Random Pixel Reveal</title>
+  <title>🎨 Daily Random Pixel Reveal</title>
   <style>
     body {
       font-family: sans-serif;
@@ -28,8 +28,8 @@
   </style>
 </head>
 <body>
-  <h1>Revealing 100 pixels a day of the amazingly horrifying pic of Aure. YOU'RE WELCOME ERIK</h1>
-  <p>100 random pixels revealed each day since 23/04/2025</p>
+  <h1>🎨 Daily Random Pixel Reveal</h1>
+  <p>10 random pixels revealed each day since 23/04/2025</p>
 
   <canvas id="canvas" width="500" height="500"></canvas> <!-- Adjust canvas size to fit your image -->
   <p id="progress"></p>
@@ -69,8 +69,8 @@
     // Load the revealed pixels from localStorage (if any)
     let revealedPixels = JSON.parse(localStorage.getItem('revealedPixels')) || [];
 
-    // Calculate the pixel range to reveal today
-    const pixelsPerDay = 100;
+    // Limit the number of pixels revealed to 10 for testing
+    const pixelsPerDay = 10;
 
     // Fill the canvas with black before revealing any pixels
     ctx.fillStyle = 'black';

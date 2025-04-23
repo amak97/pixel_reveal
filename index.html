@@ -57,6 +57,15 @@
     // Calculate the day of the year
     const dayOfYear = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
 
+    // Convert the current date to a YYYYMMDD string to use as a seed for randomness
+    const dateString = today.toISOString().split('T')[0].replace(/-/g, ''); // Format: YYYYMMDD
+
+    // Seed the random number generator with the date (same seed for everyone on the same day)
+    function seededRandom(seed) {
+      let x = Math.sin(seed) * 10000;
+      return x - Math.floor(x);
+    }
+
     // Load the revealed pixels from localStorage (if any)
     let revealedPixels = JSON.parse(localStorage.getItem('revealedPixels')) || [];
 
@@ -67,14 +76,18 @@
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
 
-    // Function to get random pixels, but only reveal new ones
-    function getRandomPixels() {
+    // Function to get random pixels, but only reveal new ones based on the date seed
+    function getRandomPixelsForToday() {
       const randomPixels = [];
       let pixelsRevealedToday = 0;
 
+      // Seed the random number generator with the current date (deterministic)
+      const seed = parseInt(dateString, 10); // Use YYYYMMDD as the seed
+      const randomGenerator = (index) => Math.floor(seededRandom(seed + index) * window.shuffledPixels.length);
+
       // Keep revealing new random pixels until we hit the daily limit
       while (pixelsRevealedToday < pixelsPerDay) {
-        const randomIndex = Math.floor(Math.random() * window.shuffledPixels.length);
+        const randomIndex = randomGenerator(pixelsRevealedToday);
 
         if (!revealedPixels.includes(randomIndex)) {
           randomPixels.push(randomIndex);
@@ -85,12 +98,12 @@
 
       // Save the updated revealed pixels back to localStorage
       localStorage.setItem('revealedPixels', JSON.stringify(revealedPixels));
-      
+
       return randomPixels;
     }
 
     // Get the random pixels for today
-    const randomPixelsToday = getRandomPixels();
+    const randomPixelsToday = getRandomPixelsForToday();
 
     // Reveal the pixels on the canvas
     randomPixelsToday.forEach((index) => {

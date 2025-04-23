@@ -29,7 +29,7 @@
 </head>
 <body>
   <h1>🎨 Daily Random Pixel Reveal</h1>
-  <p>10 random pixels revealed each day since 23/04/2025</p>
+  <p>100 random pixels revealed each day since 23/04/2025</p>
 
   <canvas id="canvas" width="500" height="500"></canvas> <!-- Adjust canvas size to fit your image -->
   <p id="progress"></p>
@@ -57,53 +57,33 @@
     // Calculate the day of the year
     const dayOfYear = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
 
-    // Convert the current date to a YYYYMMDD string to use as a seed for randomness
-    const dateString = today.toISOString().split('T')[0].replace(/-/g, ''); // Format: YYYYMMDD
+    // Calculate the pixel range to reveal today
+    const pixelsPerDay = 100;
 
-    // Seed the random number generator with the date (same seed for everyone on the same day)
-    function seededRandom(seed) {
-      let x = Math.sin(seed) * 10000;
-      return x - Math.floor(x);
-    }
-
-    // Load the revealed pixels from localStorage (if any)
+    // Retrieve revealed pixels from localStorage (if any)
     let revealedPixels = JSON.parse(localStorage.getItem('revealedPixels')) || [];
-
-    // Limit the number of pixels revealed to 10 for testing
-    const pixelsPerDay = 10;
+    const pixelsRevealedToday = new Set(); // To store pixels revealed today
 
     // Fill the canvas with black before revealing any pixels
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
 
-    // Function to get random pixels, but only reveal new ones based on the date seed
-    function getRandomPixelsForToday() {
+    // Function to get random pixels
+    function getRandomPixels() {
       const randomPixels = [];
-      let pixelsRevealedToday = 0;
-
-      // Seed the random number generator with the current date (deterministic)
-      const seed = parseInt(dateString, 10); // Use YYYYMMDD as the seed
-      const randomGenerator = (index) => Math.floor(seededRandom(seed + index) * window.shuffledPixels.length);
-
-      // Keep revealing new random pixels until we hit the daily limit
-      while (pixelsRevealedToday < pixelsPerDay) {
-        const randomIndex = randomGenerator(pixelsRevealedToday);
-
-        if (!revealedPixels.includes(randomIndex)) {
+      while (randomPixels.length < pixelsPerDay) {
+        const randomIndex = Math.floor(Math.random() * window.shuffledPixels.length);
+        // Only add new pixels that haven’t been revealed yet
+        if (!revealedPixels.includes(randomIndex) && !pixelsRevealedToday.has(randomIndex)) {
           randomPixels.push(randomIndex);
-          revealedPixels.push(randomIndex);  // Mark this pixel as revealed
-          pixelsRevealedToday++;
+          pixelsRevealedToday.add(randomIndex); // Mark pixel as revealed today
         }
       }
-
-      // Save the updated revealed pixels back to localStorage
-      localStorage.setItem('revealedPixels', JSON.stringify(revealedPixels));
-
       return randomPixels;
     }
 
     // Get the random pixels for today
-    const randomPixelsToday = getRandomPixelsForToday();
+    const randomPixelsToday = getRandomPixels();
 
     // Reveal the pixels on the canvas
     randomPixelsToday.forEach((index) => {
@@ -114,9 +94,14 @@
       ctx.fillRect(x, y, 1, 1); // Draw each pixel
     });
 
+    // Update the revealed pixels list and save to localStorage
+    revealedPixels = [...revealedPixels, ...Array.from(pixelsRevealedToday)];
+    localStorage.setItem('revealedPixels', JSON.stringify(revealedPixels));
+
     // Update progress text
     const progressText = `Day ${dayOfYear + 1}: Revealed ${randomPixelsToday.length} random pixel${randomPixelsToday.length === 1 ? '' : 's'} today.`;
     document.getElementById("progress").innerText = progressText;
+
   </script>
 </body>
 </html>

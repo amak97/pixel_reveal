@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Picture reveal</title>
+  <title>Daily Random Pixel Reveal</title>
   <style>
     body {
       font-family: sans-serif;
@@ -57,24 +57,35 @@
     // Calculate the day of the year
     const dayOfYear = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
 
+    // Load the revealed pixels from localStorage (if any)
+    let revealedPixels = JSON.parse(localStorage.getItem('revealedPixels')) || [];
+
     // Calculate the pixel range to reveal today
     const pixelsPerDay = 100;
-    const pixelsRevealedToday = new Set(); // To store pixels revealed today
 
     // Fill the canvas with black before revealing any pixels
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
 
-    // Function to get random pixels
+    // Function to get random pixels, but only reveal new ones
     function getRandomPixels() {
       const randomPixels = [];
-      while (randomPixels.length < pixelsPerDay) {
+      let pixelsRevealedToday = 0;
+
+      // Keep revealing new random pixels until we hit the daily limit
+      while (pixelsRevealedToday < pixelsPerDay) {
         const randomIndex = Math.floor(Math.random() * window.shuffledPixels.length);
-        if (!pixelsRevealedToday.has(randomIndex)) {
+
+        if (!revealedPixels.includes(randomIndex)) {
           randomPixels.push(randomIndex);
-          pixelsRevealedToday.add(randomIndex); // Mark pixel as revealed
+          revealedPixels.push(randomIndex);  // Mark this pixel as revealed
+          pixelsRevealedToday++;
         }
       }
+
+      // Save the updated revealed pixels back to localStorage
+      localStorage.setItem('revealedPixels', JSON.stringify(revealedPixels));
+      
       return randomPixels;
     }
 

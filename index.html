@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Pixel Reveal</title>
+  <title>🎨 Daily Random Pixel Reveal</title>
   <style>
     body {
       font-family: sans-serif;
@@ -21,40 +21,63 @@
       font-size: 1.1rem;
     }
     canvas {
+      width: 100%;
+      height: auto;
       border: 2px solid #333;
-      image-rendering: pixelated;
-    }
-    .footer {
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #666;
     }
   </style>
 </head>
 <body>
-  <h1>Daily Pixel Reveal to See a Glorious Pic of Aure</h1>
-  <p>One pixel revealed each day since April 23, 2025</p>
+  <h1>🎨 Daily Random Pixel Reveal</h1>
+  <p>100 random pixels revealed each day since 23/04/2025</p>
 
-  <canvas id="canvas" width="100" height="100"></canvas>
+  <canvas id="canvas" width="500" height="500"></canvas> <!-- Adjust canvas size to fit your image -->
   <p id="progress"></p>
-  <script src="pixels.js"></script>
+
+  <script src="shuffled_pixels.js"></script>
   <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
+
     const width = canvas.width;
+    const height = canvas.height;
 
-    const pixels = window.revealPixels();
-    const total = pixels.length;
+    // Input the start date in European format (dd/mm/yyyy)
+    const europeanStartDate = '23/04/2025';  // Example: 23rd April 2025
 
-    pixels.forEach((color, i) => {
-      const x = i % width;
-      const y = Math.floor(i / width);
-      ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-      ctx.fillRect(x, y, 1, 1);
-    });
+    // Split the date into day, month, and year
+    const [day, month, year] = europeanStartDate.split('/');
 
-    // Update text below canvas
-    document.getElementById("progress").innerText = `${total} pixel${total !== 1 ? 's' : ''} revealed`;
+    // Create a JavaScript Date object using the split date parts
+    const startDate = new Date(year, month - 1, day); // Month is 0-indexed, so subtract 1
+
+    // Get the current date
+    const today = new Date();
+
+    // Calculate the day of the year
+    const dayOfYear = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+
+    // Calculate the pixel range to reveal today
+    const pixelsPerDay = 100;
+    const startPixel = dayOfYear * pixelsPerDay;
+    const endPixel = Math.min(startPixel + pixelsPerDay, window.shuffledPixels.length);
+
+    // Fill the canvas with black before revealing any pixels
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, width, height);
+
+    // Reveal the pixels for today
+    for (let i = startPixel; i < endPixel; i++) {
+      const pixel = window.shuffledPixels[i];
+      const x = (i % width); // Pixel's X position
+      const y = Math.floor(i / width); // Pixel's Y position
+      ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+      ctx.fillRect(x, y, 1, 1); // Draw each pixel
+    }
+
+    // Update progress text
+    const progressText = `Day ${dayOfYear + 1}: Revealed ${endPixel - startPixel} pixel${endPixel - startPixel === 1 ? '' : 's'} today.`;
+    document.getElementById("progress").innerText = progressText;
   </script>
 </body>
 </html>

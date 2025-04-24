@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daily Random Pixel Reveal</title>
+  <title>🎨 Daily Random Pixel Reveal</title>
   <style>
     body {
       font-family: sans-serif;
@@ -28,13 +28,13 @@
   </style>
 </head>
 <body>
-  <h1>Slowly and painfully revealing the chair pic. YOU'RE WELCOME ERIK</h1>
+  <h1>🎨 Daily Random Pixel Reveal</h1>
   <p>100 random pixels revealed each day since 23/04/2025</p>
 
   <canvas id="canvas" width="500" height="500"></canvas> <!-- Adjust canvas size to fit your image -->
   <p id="progress"></p>
 
-  <script src="shuffled_pixels.js"></script> <!-- Make sure to link to the correct JS file -->
+  <script src="shuffled_pixels.js"></script> <!-- Ensure this path is correct -->
   <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
@@ -91,7 +91,8 @@
     });
 
     // Update progress text
-    const progressText = `Day ${dayOfYear + 1}: Revealed ${randomPixelsToday.length} random pixel${randomPixelsToday.length === 1 ? '' : 's'} today.`;
+    const totalRevealed = Math.min(dayOfYear * pixelsPerDay, window.shuffledPixels.length); // Calculate total revealed
+    const progressText = `Day ${dayOfYear + 1}: Revealed ${totalRevealed} pixel${totalRevealed === 1 ? '' : 's'} so far.`;
     document.getElementById("progress").innerText = progressText;
   </script>
 </body>

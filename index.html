@@ -28,47 +28,71 @@
   </style>
 </head>
 <body>
-  <h1>Random pixels of a very glorious pic of Aure revealed very randomly each day and each update. YOU'RE WELCOME ERIK</h1>
+  <h1>Slowly and painfully revealing the chair pic. YOU'RE WELCOME ERIK</h1>
   <p>100 random pixels revealed each day since 23/04/2025</p>
 
   <canvas id="canvas" width="500" height="500"></canvas> <!-- Adjust canvas size to fit your image -->
   <p id="progress"></p>
 
-  <script src="shuffled_pixels.js"></script>
-<script src="shuffled_pixels.js"></script>
-<script>
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
+  <script src="shuffled_pixels.js"></script> <!-- Make sure to link to the correct JS file -->
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
 
-  const width = canvas.width;
-  const height = canvas.height;
+    const width = canvas.width;
+    const height = canvas.height;
 
-  // Start date in European format
-  const [day, month, year] = '23/04/2025'.split('/');
-  const startDate = new Date(year, month - 1, day);
-  const today = new Date();
+    // Input the start date in European format (dd/mm/yyyy)
+    const europeanStartDate = '23/04/2025';  // Example: 23rd April 2025
 
-  // Days since start
-  const dayOfYear = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+    // Split the date into day, month, and year
+    const [day, month, year] = europeanStartDate.split('/');
 
-  const pixelsPerDay = 100;
-  const pixelsToReveal = (dayOfYear + 1) * pixelsPerDay;
+    // Create a JavaScript Date object using the split date parts
+    const startDate = new Date(year, month - 1, day); // Month is 0-indexed, so subtract 1
 
-  // Fill background black
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, width, height);
+    // Get the current date
+    const today = new Date();
 
-  for (let i = 0; i < Math.min(pixelsToReveal, window.shuffledPixels.length); i++) {
-    const pixel = window.shuffledPixels[i];
-    const x = i % width;
-    const y = Math.floor(i / width);
-    ctx.fillStyle = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
-    ctx.fillRect(x, y, 1, 1);
-  }
+    // Calculate the day of the year
+    const dayOfYear = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
 
-const totalRevealed = Math.min(pixelsToReveal, window.shuffledPixels.length);
-document.getElementById("progress").innerText =
-  `Day ${dayOfYear + 1}: Revealed ${totalRevealed} pixel${totalRevealed === 1 ? '' : 's'} so far.`;
-</script>
+    // Calculate the pixel range to reveal today
+    const pixelsPerDay = 100;
+    const pixelsRevealedToday = new Set(); // To store pixels revealed today
+
+    // Fill the canvas with black before revealing any pixels
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, width, height);
+
+    // Function to get random pixels
+    function getRandomPixels() {
+      const randomPixels = [];
+      while (randomPixels.length < pixelsPerDay) {
+        const randomIndex = Math.floor(Math.random() * window.shuffledPixels.length);
+        if (!pixelsRevealedToday.has(randomIndex)) {
+          randomPixels.push(randomIndex);
+          pixelsRevealedToday.add(randomIndex); // Mark pixel as revealed
+        }
+      }
+      return randomPixels;
+    }
+
+    // Get the random pixels for today
+    const randomPixelsToday = getRandomPixels();
+
+    // Reveal the pixels on the canvas
+    randomPixelsToday.forEach((index) => {
+      const pixel = window.shuffledPixels[index];
+      const x = pixel.x; // Pixel's X position
+      const y = pixel.y; // Pixel's Y position
+      ctx.fillStyle = `rgb(${pixel.color[0]}, ${pixel.color[1]}, ${pixel.color[2]})`;
+      ctx.fillRect(x, y, 1, 1); // Draw each pixel
+    });
+
+    // Update progress text
+    const progressText = `Day ${dayOfYear + 1}: Revealed ${randomPixelsToday.length} random pixel${randomPixelsToday.length === 1 ? '' : 's'} today.`;
+    document.getElementById("progress").innerText = progressText;
+  </script>
 </body>
 </html>

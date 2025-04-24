@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎨 Daily Random Pixel Reveal</title>
+  <title>Daily Random Pixel Reveal</title>
   <style>
     body {
       font-family: sans-serif;
@@ -28,8 +28,8 @@
   </style>
 </head>
 <body>
-  <h1>🎨 Daily Random Pixel Reveal</h1>
-  <p>Revealing pixels one by one from the best picture ever taken of me!</p>
+  <h1>Slowly and painfully revealing the CHAIR PIC. YOU'RE WELCOME ERIK</h1>
+  <p>Revealing 100 pixels each day starting from 24.04.2025</p>
 
   <canvas id="canvas" width="500" height="500"></canvas> <!-- Adjust canvas size to match your image -->
   <p id="progress"></p>
@@ -61,8 +61,8 @@
     // Pixels to reveal each day
     const pixelsPerDay = 100;
 
-    // Total revealed pixels calculation
-    const totalRevealed = Math.min(daysPassed * pixelsPerDay, window.shuffledPixels.length);
+    // Total revealed so far
+    const totalRevealed = (daysPassed + 1) * pixelsPerDay;
 
     // Fill the canvas with black (initial state before any pixels are revealed)
     ctx.fillStyle = 'black';
@@ -94,7 +94,7 @@
     // Reveal the random pixels
     revealRandomPixels();
 
-    // Display progress: how many pixels have been revealed so far
+    // Display progress
     const progressText = `Day ${daysPassed + 1}: Revealed ${totalRevealed} pixel${totalRevealed === 1 ? '' : 's'} so far.`;
     document.getElementById("progress").innerText = progressText;
   </script>
